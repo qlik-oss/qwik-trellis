@@ -1,9 +1,9 @@
-<div ng-if="isInEdit" id="qtcOverlay">
+<div ng-if="isInEdit" id="qtcOverlay" style="display: block">
     <span ng-show="showMasterVizSelect && !showError" class="lui-icon lui-icon--object" aria-hidden="true"></span>
     <span ng-show="showMasterVizSelect && !showError" style="white-space: pre-line">Add Master Visualization</span>
     <select ng-show="showMasterVizSelect && !showError" class="lui-select  lui-select--large"
         ng-change="onMasterVizSelected(masterViz)" ng-model="masterViz">
-        <option ng-repeat="masterViz in masterVizs" value="{{masterViz.qInfo.qId}}">{{masterViz.qMeta.title}}</option>
+        <option ng-repeat="masterViz in masterVizs | orderBy : 'qMeta.title' " value="{{masterViz.qInfo.qId}}">{{masterViz.qMeta.title}}</option>
     </select>
 </div>
 <div ng-show="showError" class="qlik-trellis-error">
