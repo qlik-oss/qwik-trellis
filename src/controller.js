@@ -497,7 +497,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                   let measure = await getMasterMeasure(path.libDef.get(props, i));
                   // get modified measure
                   let modMeasure = await createMeasure(
-                    measure, dimName, dimValue, paths.showAll, $scope.qtcProps.type);
+                    measure, dimName, dimValue, path.showAll, $scope.qtcProps.type);
                   // set modified measure
                   path.libDefMes(props, i);
                   path.def.set(props, i, modMeasure);
@@ -508,7 +508,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                   let measure = path.def.get(props, i);
                   // get modified measure
                   let modMeasure = await createMeasure(
-                    measure, dimName, dimValue, paths.showAll, $scope.qtcProps.type);
+                    measure, dimName, dimValue, path.showAll, $scope.qtcProps.type);
                   // set modified measure
                   path.libDefMes(props, i);
                   path.def.set(props, i, modMeasure);
@@ -532,7 +532,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                       let measure = await getMasterMeasure(path.libDef.get(props, i, j));
                       // get modified measure
                       let modMeasure = await createMeasure(
-                        measure, dimName, dimValue, paths.showAll, $scope.qtcProps.type);
+                        measure, dimName, dimValue, path.showAll, $scope.qtcProps.type);
                       // set modified measure
                       path.libDef.set(props, i, j, path.libDefMes(props, i, j));
                       path.def.set(props, i, j, modMeasure);
@@ -543,7 +543,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                       let measure = path.def.get(props, i, j);
                       // get modified measure
                       let modMeasure = await createMeasure(
-                        measure, dimName, dimValue, paths.showAll, $scope.qtcProps.type);
+                        measure, dimName, dimValue, path.showAll, $scope.qtcProps.type);
                       // set modified measure
                       path.libDef.set(props, i, j, path.libDefMes(props, i, j));
                       path.def.set(props, i, j, modMeasure);

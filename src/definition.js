@@ -41,6 +41,11 @@ define([], function () {
     uses:"dimensions",    
     min: 1,
     max: 1,
+    items: {
+      nullSuppression: {
+        show: false
+      }
+    }
   };
  
   var data = {
