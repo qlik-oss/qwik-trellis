@@ -40,12 +40,7 @@ define([], function () {
   var dimensions = {
     uses:"dimensions",    
     min: 1,
-    max: 1,
-    items: {
-      nullSuppression: {
-        show: false
-      }
-    }
+    max: 1    
   };
  
   var data = {

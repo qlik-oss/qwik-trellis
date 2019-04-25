@@ -141,11 +141,11 @@ export default {
   default: {
     name: "default",
     type: "measureBased",
-    autoRange: true,    
+    autoRange: true,
+    showAll: true,
     paths: [
       {
-        loopsCount: 1,
-        showAll: true,
+        loopsCount: 1,        
         path1: (props) => { return props.qHyperCubeDef.qMeasures; },
         libCheck: (props, index) => {
           return props.qHyperCubeDef.qMeasures[index].qLibraryId.length > 1;
