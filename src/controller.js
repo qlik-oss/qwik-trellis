@@ -106,7 +106,7 @@ export default ['$scope', '$element', function ($scope, $element) {
 
   $scope.$watch("layout.qHyperCube.qDimensionInfo[0].qGroupFieldDefs[0]", async function (newValue, oldValue) {
     if (!$scope.layout.prop.vizId) {
-      helper.getMasterItems().then(function(items) {
+      helper.getMasterItems().then(function (items) {
         $scope.masterVizs = items;
         $scope.showMasterVizSelect = true;
       });
@@ -352,7 +352,7 @@ export default ['$scope', '$element', function ($scope, $element) {
               chartPromises.push(promise);
             }
 
-            return Promise.all(chartPromises).then(function (viz) {
+            return Promise.all(chartPromises).then(async function (viz) {
               for (var v = 0; v < viz.length; v++) {
                 $scope.sessionIds.push(viz[v].id);
               }
@@ -369,6 +369,77 @@ export default ['$scope', '$element', function ($scope, $element) {
                       $scope.max = $scope.maxValues[t];
                     }
                   }
+                }
+
+                // If combochart then add extra step to get data from each chart to set $scope.max
+                if ($scope.vizProp.qInfo.qType == 'combochart') {
+                  let values = [];
+                  let axisMap = [];
+                  for (let mc = 0; mc < $scope.vizProp.qHyperCubeDef.qMeasures.length; mc++) {
+                    axisMap.push({
+                      "measure": mc + 1,
+                      "axis": $scope.vizProp.qHyperCubeDef.qMeasures[mc].qDef.series.axis
+                    });
+                  }
+                  for (var o = 0; o < viz.length; o++) {
+                    let object = await enigma.app.getObject(viz[o].id);
+                    let params = {
+                      "qPath": "/qHyperCubeDef",
+                      "qPages": [
+                        {
+                          "qLeft": 0,
+                          "qTop": 0,
+                          "qWidth": 10,
+                          "qHeight": 1000
+                        }
+                      ]
+                    };
+                    let hypercube = await object.getHyperCubeData(params);
+                    for (let h = 0; h < hypercube.length; h++) {
+                      for (let m = 0; m < hypercube[h].qMatrix.length; m++) {
+                        for (let r = 0; r < hypercube[h].qMatrix[m].length; r++) {
+                          if (r != 0) {
+                            let axisNumber = axisMap.filter(({ measure }) => measure == r);
+                            values.push({ "axis": axisNumber[0].axis, "value": hypercube[h].qMatrix[m][r].qNum });
+                          }
+                        }
+                      }
+                    }
+                  }
+                  let axis1 = values.filter(({ axis }) => axis == 0);
+                  $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
+                  let axis2 = values.filter(({ axis }) => axis == 1);
+                  $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
+                }
+
+                if ($scope.vizProp.qInfo.qType == 'scatterplot') {
+                  let values = [];
+                  for (var s = 0; s < viz.length; s++) {
+
+                    let object = await enigma.app.getObject(viz[s].id);
+                    let params = {
+                      "qPath": "/qHyperCubeDef",
+                      "qPages": [
+                        {
+                          "qLeft": 0,
+                          "qTop": 0,
+                          "qWidth": 10,
+                          "qHeight": 1000
+                        }
+                      ]
+                    };
+                    let hypercube = await object.getHyperCubeData(params);
+                    for (let h = 0; h < hypercube.length; h++) {
+                      for (let m = 0; m < hypercube[h].qMatrix.length; m++) {
+                        values.push({ "axis": 0, "value": hypercube[h].qMatrix[m][1].qNum });
+                        values.push({ "axis": 1, "value": hypercube[h].qMatrix[m][2].qNum });
+                      }
+                    }
+                  }
+                  let axis1 = values.filter(({ axis }) => axis == 0);
+                  $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
+                  let axis2 = values.filter(({ axis }) => axis == 1);
+                  $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
                 }
 
                 let objectPromises = [];
@@ -397,6 +468,24 @@ export default ['$scope', '$element', function ($scope, $element) {
                             props.measureAxis.max = Math.round($scope.max * 1.1);
                             var promise = objects[p].setProperties(props);
                             setPropPromises.push(promise);
+                          }
+                          if ($scope.layout.prop.autoRange && props.qInfo.qType == 'combochart') {
+                            props.measureAxes[0].autoMinMax = false;
+                            props.measureAxes[0].minMax = "max";
+                            props.measureAxes[0].max = $scope.maxAxis1;
+                            props.measureAxes[1].autoMinMax = false;
+                            props.measureAxes[1].minMax = "max";
+                            props.measureAxes[1].max = $scope.maxAxis2;
+                            var comboPromise = objects[p].setProperties(props);
+                            setPropPromises.push(comboPromise);
+                          }
+                          if ($scope.layout.prop.autoRange && props.qInfo.qType == 'scatterplot') {
+                            props.xAxis.autoMinMax = false;
+                            props.xAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis1;
+                            props.yAxis.autoMinMax = false;
+                            props.yAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis2;
+                            var scatterPromise = objects[p].setProperties(props);
+                            setPropPromises.push(scatterPromise);
                           }
                         }
 
@@ -592,7 +681,7 @@ export default ['$scope', '$element', function ($scope, $element) {
         resolve(props);
       }
       catch (err) {
-        resolve(props);        
+        resolve(props);
       }
     });
   }
@@ -601,13 +690,13 @@ export default ['$scope', '$element', function ($scope, $element) {
     return new Promise(function (resolve, reject) {
       try {
         var propsString = JSON.stringify(vizProp);
-        if ($scope.layout.prop.advanced) {         
+        if ($scope.layout.prop.advanced) {
           propsString = propsString.replaceAll('$(vDimSetFull)', "{<" + `[${dimName}]={'${dimValue}'}` + ">}");
           propsString = propsString.replaceAll('$(vDimSet)', `,[${dimName}]={'${dimValue}'}`);
           propsString = propsString.replaceAll('$(vDim)', `'${dimName}'`);
-          propsString = propsString.replaceAll('$(vDimValue)', `'${dimValue}'`);          
+          propsString = propsString.replaceAll('$(vDimValue)', `'${dimValue}'`);
         }
-        var props = JSON.parse(propsString); 
+        var props = JSON.parse(propsString);
         props.showTitles = true;
         props.title = dimValue;
         // Auto Range
