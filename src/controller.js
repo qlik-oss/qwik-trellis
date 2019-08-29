@@ -104,7 +104,7 @@ export default ['$scope', '$element', function ($scope, $element) {
     });
   }
 
-  $scope.$watch("layout.qHyperCube.qDimensionInfo[0].qGroupFieldDefs[0]", async function (newValue, oldValue) {
+  $scope.$watch("layout.qHyperCube.qDimensionInfo[0]", async function (newValue, oldValue) {
     if (!$scope.layout.prop.vizId) {
       helper.getMasterItems().then(function(items) {
         $scope.masterVizs = items;
