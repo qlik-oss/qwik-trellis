@@ -169,6 +169,9 @@ export default {
         libDefMes: (props, index) => {
           props.qHyperCubeDef.qMeasures[index].qLibraryId = '';
         },
+        measureLabel: (props, index, measureLabel) => {
+          props.qHyperCubeDef.qMeasures[index].qDef.qLabel = measureLabel;
+        },
         generalCheck: (props, index) => {
           try {
             return !!props.qHyperCubeDef.qMeasures[index];

@@ -8,6 +8,26 @@ define(["qlik"], function (qlik) {
       'filterpane',
       'histogram'],
 
+    getFields: function () {
+      var app = qlik.currApp(this);
+      return new Promise(function (resolve, reject) {
+        try {
+          app.getList("FieldList", function (model) {
+            /* eslint-disable no-console */
+            return resolve(model.qFieldList.qItems.map(function (item) {
+              return {
+                value: item.qName,
+                label: item.qName
+              };
+            }).sort(compare));
+          });
+        }
+        catch (err) {
+          reject(err);
+        }
+      });
+    },
+
     getMasterItems: function () {
       var self = this;
       var app = qlik.currApp(this);
@@ -43,3 +63,17 @@ define(["qlik"], function (qlik) {
     }
   };
 });
+
+function compare(a, b) {
+  // Use toUpperCase() to ignore character casing
+  const genreA = a.label.toUpperCase();
+  const genreB = b.label.toUpperCase();
+
+  let comparison = 0;
+  if (genreA > genreB) {
+    comparison = 1;
+  } else if (genreA < genreB) {
+    comparison = -1;
+  }
+  return comparison;
+}
