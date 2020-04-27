@@ -71,12 +71,6 @@ export default ['$scope', '$element', function ($scope, $element) {
     }
   });
 
-  function isReadyToSetupStyles() {
-    return typeof $scope.mobileMode !== 'undefined'
-      && typeof $scope.sortCriterias !== 'undefined'
-      && typeof $scope.nullSuppression !== 'undefined';
-  }
-
   function setupStyles() {
     return new Promise(function (resolve, reject) {
       if (!$scope.layout.qHyperCube.qDimensionInfo[0]) {
