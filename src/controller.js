@@ -753,9 +753,9 @@ export default ['$scope', '$element', function ($scope, $element) {
                           }
                           if ($scope.layout.prop.autoRange && props.qInfo.qType == 'scatterplot') {
                             props.xAxis.autoMinMax = false;
-                            props.xAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis1;
+                            props.xAxis.max = '=' + $scope.maxAxis1;
                             props.yAxis.autoMinMax = false;
-                            props.yAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis2;
+                            props.yAxis.max = '=' + $scope.maxAxis2;
                             var scatterPromise = objects[p].setProperties(props);
                             setPropPromises.push(scatterPromise);
                           }
