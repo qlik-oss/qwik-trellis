@@ -1,19 +1,57 @@
+<!-- Overlay -->
 <div ng-if="isInEdit" id="qtcOverlay">
-    <span ng-show="showMasterVizSelect && !showError" class="lui-icon lui-icon--object" aria-hidden="true"></span><br>    
-    <button ng-if="showMasterVizSelect && !showError" class="add-button lui-button" ng-click="showAddMasterItemsDialog($event)">Add master visualization</button>
+    <span ng-show="showMasterVizSelect && !showError" class="lui-icon lui-icon--object" aria-hidden="true"></span><br>
+    <button ng-if="showMasterVizSelect && !showError" class="add-button lui-button"
+        ng-click="showAddMasterItemsDialog($event)">Add master visualization</button>
 </div>
+<!-- Error Msg -->
 <div ng-show="showError" class="qlik-trellis-error">
     {{errorMsg}}
 </div>
-<div ng-if="!layout.prop.slideMode && !mobileMode" ng-repeat="r in [].constructor(rowNum) track by $index"
-    id="qlik-trellis-grid-{{layoutId}}" ng-style="rowHeight" ng-show="showCharts" class="qlik-trellis-flex-grid">
-    <div ng-repeat="c in [].constructor(colNum) track by $index" class="qlik-trellis-cell"></div>
+<!-- 2 Dimension View -->
+<div ng-if="layout.qHyperCube.qDimensionInfo[1] && !mobileMode && !layout.prop.slideMode" class="qlik-trellis-container">
+    <div ng-style="headerWidth" class="qlik-trellis-container-header">
+        <div ng-style ="customTitleColDef" class="qlik-trellis-column-title">{{layout.qHyperCube.qDimensionInfo[1].qFallbackTitle}}</div>
+        <div class="qlik-trellis-col-labels">
+            <div ng-style ="customValuesColDef" ng-repeat ="colValue in colValues" class="qlik-trellis-col-label">{{colValue}}</div>
+        </div>
+    </div>
+    <div class="qlik-trellis-container-content">
+        <div class="qlik-trellis-container-sidebar">
+            <div class="qlik-trellis-container-row">
+                <div ng-style ="customTitleRowDef" class="qlik-trellis-row-title">{{layout.qHyperCube.qDimensionInfo[0].qFallbackTitle}}</div>
+                <div class="qlik-trellis-row-labels">
+                    <div ng-style = "customValuesRowDef" ng-repeat="rowValue in rowValues" class="qlik-trellis-row-label">{{rowValue}}</div>
+                </div>
+            </div>
+            <div class="qlik-trellis-container-charts">
+            <div ng-repeat="r in [].constructor(rowNum) track by $index" id="qlik-trellis-grid-{{layoutId}}"
+                 ng-show="showCharts" class="qlik-trellis-flex-grid">
+                <div ng-style="borderProps" ng-repeat="c in [].constructor(colNum) track by $index" class="qlik-trellis-cell"></div>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>
-<div ng-if="layout.prop.slideMode || mobileMode" ng-swipe-left="nextSlide()"  ng-show="showCharts" ng-swipe-right="prevSlide()" class="qlik-trellis-slide-container">
-    <div ng-show="$index == slideIndex" ng-repeat="s in [].constructor(currentCube.length) track by $index" class="qlik-trellis-slide"></div>
-    <span ng-show="slideIndex != 0 && showCharts" class="lui-icon  lui-icon--large lui-icon--arrow-left qlik-trellis-prev" aria-hidden="true" ng-click="prevSlide()"></span>
-    <span ng-show="slideIndex + 1 != currentCube.length && showCharts" class="lui-icon  lui-icon--large lui-icon--arrow-right qlik-trellis-next" aria-hidden="true" ng-click="nextSlide()"></span>
+<!-- 1 Dimension View -->
+<div ng-if="!layout.prop.slideMode && !mobileMode && !layout.qHyperCube.qDimensionInfo[1]"
+    ng-repeat="r in [].constructor(rowNum) track by $index" id="qlik-trellis-grid-{{layoutId}}" ng-style="rowHeight"
+    ng-show="showCharts" class="qlik-trellis-flex-grid">
+    <div ng-style="borderProps" ng-repeat="c in [].constructor(colNum) track by $index" class="qlik-trellis-cell"></div>
+</div>
+<!-- Mobile View -->
+<div ng-if="layout.prop.slideMode || mobileMode" ng-swipe-left="nextSlide()" ng-show="showCharts"
+    ng-swipe-right="prevSlide()" class="qlik-trellis-slide-container">
+    <div ng-show="$index == slideIndex" ng-repeat="s in [].constructor(currentCubeLength) track by $index"
+        class="qlik-trellis-slide"></div>
+    <span ng-show="slideIndex != 0 && showCharts"
+        class="lui-icon  lui-icon--large lui-icon--arrow-left qlik-trellis-prev" aria-hidden="true"
+        ng-click="prevSlide()"></span>
+    <span ng-show="slideIndex + 1 != currentCubeLength && showCharts"
+        class="lui-icon  lui-icon--large lui-icon--arrow-right qlik-trellis-next" aria-hidden="true"
+        ng-click="nextSlide()"></span>
     <div ng-swipe-left="nextSlide()" ng-swipe-right="prevSlide()" ng-show="showCharts" style="text-align:center">
-        <span class="qlik-trellis-dot" ng-repeat="s in [].constructor(currentCube.length) track by $index" ng-click="dotClick($index)"></span>
+        <span class="qlik-trellis-dot" ng-repeat="s in [].constructor(currentCubeLength) track by $index"
+            ng-click="dotClick($index)"></span>
     </div>
 </div>

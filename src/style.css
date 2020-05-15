@@ -1,12 +1,16 @@
 #qtcOverlay {
-  position: absolute; /* Sit on top of the page content */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
-  top: 0; 
+  position: absolute;
+  /* Sit on top of the page content */
+  width: 100%;
+  /* Full width (cover the whole page) */
+  height: 100%;
+  /* Full height (cover the whole page) */
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000; /* Specify a stack order in case you're using a different order for other elements */
+  z-index: 1000;
+  /* Specify a stack order in case you're using a different order for other elements */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,59 +23,130 @@
 }
 
 .qlik-trellis-error {
-  position: absolute; /* Sit on top of the page content */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
-  top: 0; 
+  position: absolute;
+  /* Sit on top of the page content */
+  width: 100%;
+  /* Full width (cover the whole page) */
+  height: 100%;
+  /* Full height (cover the whole page) */
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000; /* Specify a stack order in case you're using a different order for other elements */
+  z-index: 1000;
+  /* Specify a stack order in case you're using a different order for other elements */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.qlik-trellis-flex-grid {
-    display: flex ;
-    height: 100%;
-  }
-  .qlik-trellis-cell {
-    flex: 1;
-    margin: 2px;
-    height: 100% !important;
-  }
-
-  .qv-object-qlik-trellis .qv-inner-object {
-    overflow:visible;
-  }
-
-  .qlik-trellis-slide {
-    height: 90%;
-    width: 85%;
-    margin: auto;
-  }
-  
-  .qlik-trellis-slide-container {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Next & previous buttons */
-.qlik-trellis-prev, .qlik-trellis-next {
-    position: absolute;
-    top: 40%;
-    width: auto;
-    padding: 16px;
-    color: #C2C2C2;
-    z-index: 1200;
+.qlik-trellis-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.qlik-trellis-prev:hover, .qlik-trellis-next:hover  { 
-  background-color:#D9D9D9;
+.qlik-trellis-container-header {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-end;
+}
+
+/* .qlik-trellis-column-title {
+  align-self: center;
+} */
+
+.qlik-trellis-col-labels {
+  display: flex;
+  flex-direction: row;
+}
+
+/* .qlik-trellis-col-label {
+  text-align: center;
+  flex: 1;
+} */
+
+.qlik-trellis-container-content {
+  display: flex;
+  flex-direction: column;
+  height: 95%;
+}
+
+.qlik-trellis-container-sidebar {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.qlik-trellis-container-row {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .qlik-trellis-row-title {
+  align-self: center;
+} */
+
+.qlik-trellis-row-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* .qlik-trellis-row-label {
+  align-items: center;
+  display: flex;
+  flex: 1;
+} */
+
+.qlik-trellis-container-charts {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.qlik-trellis-flex-grid {
+  display: flex;
+  height: 100%;
+}
+
+.qlik-trellis-cell {
+  flex: 1;
+  height: 100%;
+}
+
+.qv-object-qlik-trellis .qv-inner-object {
+  overflow: visible;
+}
+
+.qlik-trellis-slide {
+  height: 90%;
+  width: 85%;
+  margin: auto;
+}
+
+.qlik-trellis-slide-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Next & previous buttons */
+
+.qlik-trellis-prev, .qlik-trellis-next {
+  position: absolute;
+  top: 40%;
+  width: auto;
+  padding: 16px;
+  color: #C2C2C2;
+  z-index: 1200;
+}
+
+.qlik-trellis-prev:hover, .qlik-trellis-next:hover {
+  background-color: #D9D9D9;
 }
 
 /* Position the "next button" to the right */
+
 .qlik-trellis-next {
   right: 0;
 }
