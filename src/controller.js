@@ -125,7 +125,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                 }
                 colArrayLen--;
               }
-              
+
               $scope.rowValues = rowArray;
               $scope.colValues = colArray;
             } catch (e) {
@@ -535,7 +535,7 @@ export default ['$scope', '$element', function ($scope, $element) {
               let dimValue = $scope.currentCube[q][0].qText;
               let dimName2;
               let dimValue2;
-              
+
               if ($scope.qtcProps && !$scope.layout.prop.advanced) {
                 var promise = getAndSetMeasures($scope.vizProp, dimName, dimValue, dimName2, dimValue2, $scope.qtcProps);
                 propPromises.push(promise);
@@ -624,7 +624,7 @@ export default ['$scope', '$element', function ($scope, $element) {
             }
 
 
-            return Promise.all(chartPromises).then(function (viz) {
+            return Promise.all(chartPromises).then(async function (viz) {
               for (var v = 0; v < viz.length; v++) {
                 $scope.sessionIds.push(viz[v].id);
               }
@@ -641,6 +641,77 @@ export default ['$scope', '$element', function ($scope, $element) {
                       $scope.max = $scope.maxValues[t];
                     }
                   }
+                }
+
+                // If combochart then add extra step to get data from each chart to set $scope.max
+                if ($scope.vizProp.qInfo.qType == 'combochart') {
+                  let values = [];
+                  let axisMap = [];
+                  for (let mc = 0; mc < $scope.vizProp.qHyperCubeDef.qMeasures.length; mc++) {
+                    axisMap.push({
+                      "measure": mc + 1,
+                      "axis": $scope.vizProp.qHyperCubeDef.qMeasures[mc].qDef.series.axis
+                    });
+                  }
+                  for (var o = 0; o < viz.length; o++) {
+                    let object = await enigma.app.getObject(viz[o].id);
+                    let params = {
+                      "qPath": "/qHyperCubeDef",
+                      "qPages": [
+                        {
+                          "qLeft": 0,
+                          "qTop": 0,
+                          "qWidth": 10,
+                          "qHeight": 1000
+                        }
+                      ]
+                    };
+                    let hypercube = await object.getHyperCubeData(params);
+                    for (let h = 0; h < hypercube.length; h++) {
+                      for (let m = 0; m < hypercube[h].qMatrix.length; m++) {
+                        for (let r = 0; r < hypercube[h].qMatrix[m].length; r++) {
+                          if (r != 0) {
+                            let axisNumber = axisMap.filter(({ measure }) => measure == r);
+                            values.push({ "axis": axisNumber[0].axis, "value": hypercube[h].qMatrix[m][r].qNum });
+                          }
+                        }
+                      }
+                    }
+                  }
+                  let axis1 = values.filter(({ axis }) => axis == 0).filter(({ value }) => value !== 'NaN');
+                  $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
+                  let axis2 = values.filter(({ axis }) => axis == 1).filter(({ value }) => value !== 'NaN');
+                  $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
+                }
+
+                if ($scope.vizProp.qInfo.qType == 'scatterplot') {
+                  let values = [];
+                  for (var s = 0; s < viz.length; s++){
+
+                    let object = await enigma.app.getObject(viz[s].id);
+                    let params = {
+                      "qPath": "/qHyperCubeDef",
+                      "qPages": [
+                        {
+                          "qLeft": 0,
+                          "qTop": 0,
+                          "qWidth": 10,
+                          "qHeight": 1000
+                        }
+                      ]
+                    };
+                    let hypercube = await object.getHyperCubeData(params);
+                    for (let h = 0; h < hypercube.length; h++) {
+                      for (let m = 0; m < hypercube[h].qMatrix.length; m++) {
+                        values.push({ "axis": 0, "value": hypercube[h].qMatrix[m][1].qNum });
+                        values.push({ "axis": 1, "value": hypercube[h].qMatrix[m][2].qNum });
+                      }
+                    }
+                  }
+                  let axis1 = values.filter(({ axis }) => axis == 0).filter(({ value }) => value !== 'NaN');
+                  $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
+                  let axis2 = values.filter(({ axis }) => axis == 1).filter(({ value }) => value !== 'NaN');
+                  $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
                 }
 
                 let objectPromises = [];
@@ -670,6 +741,26 @@ export default ['$scope', '$element', function ($scope, $element) {
                             var promise = objects[p].setProperties(props);
                             setPropPromises.push(promise);
                           }
+                          if ($scope.layout.prop.autoRange && props.qInfo.qType == 'combochart') {
+                            props.measureAxes[0].autoMinMax = false;
+                            props.measureAxes[0].minMax = "max";
+                            props.measureAxes[0].max = $scope.maxAxis1;
+                            props.measureAxes[1].autoMinMax = false;
+                            props.measureAxes[1].minMax = "max";
+                            props.measureAxes[1].max = $scope.maxAxis2;
+                            var comboPromise = objects[p].setProperties(props);
+                            setPropPromises.push(comboPromise);
+                          }
+                          if ($scope.layout.prop.autoRange && props.qInfo.qType == 'scatterplot') {
+                            props.xAxis.autoMinMax = false;
+                            props.xAxis.minMax = "max";
+                            props.xAxis.max = $scope.maxAxis1;
+                            props.yAxis.autoMinMax = false;
+                            props.yAxis.minMax = "max";
+                            props.yAxis.max = $scope.maxAxis2;
+                            var scatterPromise = objects[p].setProperties(props);
+                            setPropPromises.push(scatterPromise);
+                          }
                         }
 
                         return Promise.all(setPropPromises).then(function () {
@@ -697,7 +788,6 @@ export default ['$scope', '$element', function ($scope, $element) {
                 return showCharts(viz);
               }
             });
-
           });
         });
       });
@@ -810,7 +900,7 @@ export default ['$scope', '$element', function ($scope, $element) {
                   continue;
                 }
 
-                // is lib item 
+                // is lib item
                 if (path.libCheck(props, i)) {
                   // get lib item
                   let m = await getMasterMeasure(path.libDef.get(props, i));
@@ -902,7 +992,7 @@ export default ['$scope', '$element', function ($scope, $element) {
         props.showTitles = true;
         if (typeof dimName2 == 'undefined') {
           if($scope.mobileMode || $scope.layout.slideMode) {
-            props.title = `${dimName}: ${dimValue}`; 
+            props.title = `${dimName}: ${dimValue}`;
           }
           else {
             props.title = dimValue;
@@ -911,7 +1001,7 @@ export default ['$scope', '$element', function ($scope, $element) {
         else {
           if($scope.mobileMode || $scope.layout.prop.slideMode) {
             props.showTitles = true;
-            props.title = `${dimName}: ${dimValue}, ${dimName2}: ${dimValue2}`; 
+            props.title = `${dimName}: ${dimValue}, ${dimName2}: ${dimValue2}`;
           }
           else {
             props.showTitles = false;
@@ -1079,17 +1169,17 @@ export default ['$scope', '$element', function ($scope, $element) {
             if (hash[0] === 'opt') {
               let decodedVal = decodeURIComponent(hash[1]);
               decodedVal = decodedVal.toLowerCase();
-              if (decodedVal.indexOf('nointeraction') > -1) { 
-                options = options || {};                 
+              if (decodedVal.indexOf('nointeraction') > -1) {
+                options = options || {};
                 options.noInteraction = true;
               }
 
               if (decodedVal.indexOf('noselections') > -1) {
-                options = options || {};                 
+                options = options || {};
                 options.noSelections = true;
               }
             }
-          }          
+          }
         });
       tasks.push(viz[i].show(trellisCells[i], options));
     }
