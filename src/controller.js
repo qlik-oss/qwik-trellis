@@ -678,15 +678,15 @@ export default ['$scope', '$element', function ($scope, $element) {
                       }
                     }
                   }
-                  let axis1 = values.filter(({ axis }) => axis == 0);
+                  let axis1 = values.filter(({ axis }) => axis == 0).filter(({ value }) => value !== 'NaN');
                   $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
-                  let axis2 = values.filter(({ axis }) => axis == 1);
+                  let axis2 = values.filter(({ axis }) => axis == 1).filter(({ value }) => value !== 'NaN');
                   $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
                 }
 
                 if ($scope.vizProp.qInfo.qType == 'scatterplot') {
                   let values = [];
-                  for (var s = 0; s < viz.length; s++) {
+                  for (var s = 0; s < viz.length; s++){
 
                     let object = await enigma.app.getObject(viz[s].id);
                     let params = {
@@ -708,9 +708,9 @@ export default ['$scope', '$element', function ($scope, $element) {
                       }
                     }
                   }
-                  let axis1 = values.filter(({ axis }) => axis == 0);
+                  let axis1 = values.filter(({ axis }) => axis == 0).filter(({ value }) => value !== 'NaN');
                   $scope.maxAxis1 = Math.max.apply(Math, axis1.map(function (v) { return v.value * 1.1; }));
-                  let axis2 = values.filter(({ axis }) => axis == 1);
+                  let axis2 = values.filter(({ axis }) => axis == 1).filter(({ value }) => value !== 'NaN');
                   $scope.maxAxis2 = Math.max.apply(Math, axis2.map(function (v) { return v.value * 1.1; }));
                 }
 
@@ -753,9 +753,11 @@ export default ['$scope', '$element', function ($scope, $element) {
                           }
                           if ($scope.layout.prop.autoRange && props.qInfo.qType == 'scatterplot') {
                             props.xAxis.autoMinMax = false;
-                            props.xAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis1;
+                            props.xAxis.minMax = "max";
+                            props.xAxis.max = $scope.maxAxis1;
                             props.yAxis.autoMinMax = false;
-                            props.yAxis.max.qValueExpression.qExpr = '=' + $scope.maxAxis2;
+                            props.yAxis.minMax = "max";
+                            props.yAxis.max = $scope.maxAxis2;
                             var scatterPromise = objects[p].setProperties(props);
                             setPropPromises.push(scatterPromise);
                           }
@@ -786,7 +788,6 @@ export default ['$scope', '$element', function ($scope, $element) {
                 return showCharts(viz);
               }
             });
-
           });
         });
       });
