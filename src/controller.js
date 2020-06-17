@@ -907,20 +907,19 @@ export default ['$scope', '$element', function ($scope, $element) {
                   continue;
                 }
 
-                // is lib item 
+                // is lib item
                 if (path.libCheck(props, i)) {
                   // get lib item
                   let m = await getMasterMeasure(path.libDef.get(props, i));
                   let mes = await m.getMeasure();
                   let measure = mes.qDef;
-                  let measureLabel = mes.qLabel;
                   // get modified measure
                   let modMeasure = await createMeasure(
                     measure, dimName, dimValue, dimName2, dimValue2, showAll, $scope.qtcProps.type);
                   // set modified measure
                   path.libDefMes(props, i);
                   path.def.set(props, i, modMeasure);
-                  path.measureLabel(props, i, measureLabel);
+                  path.libPropTransfer(props, i, mes);
                 }
                 // is not lib item
                 else {
@@ -953,13 +952,11 @@ export default ['$scope', '$element', function ($scope, $element) {
                       let m = await getMasterMeasure(path.libDef.get(props, i));
                       let mes = await m.getMeasure();
                       let measure = mes.qDef;
-                      let measureLabel = mes.qLabel;
                       // get modified measure
                       let modMeasure = await createMeasure(measure, dimName, dimValue, dimName2, dimValue2, showAll, $scope.qtcProps.type);
                       // set modified measure
                       path.libDef.set(props, i, j, path.libDefMes(props, i, j));
                       path.def.set(props, i, j, modMeasure);
-                      path.measureLabel(props, i, j, modMeasure);
                     }
                     // Normal measure
                     else {
@@ -1000,7 +997,7 @@ export default ['$scope', '$element', function ($scope, $element) {
             propsString = propsString.replaceAll('$(vDimSet)', `,[${dimName}]={'${dimValue}'}`);
             propsString = propsString.replaceAll('$(vDim)', `'${dimName}'`);
             propsString = propsString.replaceAll('$(vDimValue)', `'${dimValue}'`);
-          }         
+          }
         }
         var props = JSON.parse(propsString);
         props.showTitles = true;

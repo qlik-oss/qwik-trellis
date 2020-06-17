@@ -29,6 +29,21 @@ export default {
       libDefMes: (props, index) => {
         props.gaLayers[index].size.expression.type = 'expression';
       },
+      libPropTransfer: (props, index, libMeasure) => {
+        const size = props.gaLayers[index].size;
+        if (libMeasure.qLabelExpression) {
+          size.label = {
+            qStringExpression: libMeasure.qLabelExpression
+          };
+        } else {
+          size.label = libMeasure.qLabel;
+        }
+        if (size.formatting.quarantine && size.formatting.quarantine.qNumFormat && libMeasure.qNumFormat) {
+          size.formatting.qNumFormat = libMeasure.qNumFormat;
+          size.formatting.isCustomFormatted = libMeasure.isCustomFormatted;
+          size.formatting.quarantine = undefined;
+        }
+      },
       generalCheck: (props, index) => {
         try {
           return !!props.gaLayers[index].size.expression;
@@ -62,6 +77,9 @@ export default {
       libDefMes: (props, index) => {
         props.gaLayers[index].color.expression.type = 'expression';
       },
+      libPropTransfer: (props, index, libMeasure) => {
+        // find if and where the label should be stored
+      },
       generalCheck: (props, index) => {
         try {
           return !!props.gaLayers[index].color.expression;
@@ -74,7 +92,8 @@ export default {
       loopsCount: 1,
       path1: (props) => { return props.gaLayers; },
       libCheck: (props, index) => {
-        return props.gaLayers[index].color.byMeasureDef.type == 'libraryItem';
+        const color = props.gaLayers[index].color;
+        return !color.auto && color.mode == 'byMeasure' && color.byMeasureDef.type == 'libraryItem';
       },
       def: {
         set: (props, index, newDef) => {
@@ -94,6 +113,21 @@ export default {
       },
       libDefMes: (props, index) => {
         props.gaLayers[index].color.byMeasureDef.type = 'expression';
+      },
+      libPropTransfer: (props, index, libMeasure) => {
+        const color = props.gaLayers[index].color;
+        if (libMeasure.qLabelExpression) {
+          color.altLabel = {
+            qStringExpression: libMeasure.qLabelExpression
+          };
+        } else {
+          color.altLabel = libMeasure.qLabel;
+        }
+        if (color.formatting.quarantine && color.formatting.quarantine.qNumFormat && libMeasure.qNumFormat) {
+          color.formatting.qNumFormat = libMeasure.qNumFormat;
+          color.formatting.isCustomFormatted = libMeasure.isCustomFormatted;
+          color.formatting.quarantine = undefined;
+        }
       },
       generalCheck: (props, index) => {
         try {
@@ -169,8 +203,15 @@ export default {
         libDefMes: (props, index) => {
           props.qHyperCubeDef.qMeasures[index].qLibraryId = '';
         },
-        measureLabel: (props, index, measureLabel) => {
-          props.qHyperCubeDef.qMeasures[index].qDef.qLabel = measureLabel;
+        libPropTransfer: (props, index, libMeasure) => {
+          const def = props.qHyperCubeDef.qMeasures[index].qDef;
+          def.qLabel = libMeasure.qLabel;
+          def.qLabelExpression = libMeasure.qLabelExpression;
+          if (def.quarantine && def.quarantine.qNumFormat && libMeasure.qNumFormat) {
+            def.qNumFormat = libMeasure.qNumFormat;
+            def.isCustomFormatted = libMeasure.isCustomFormatted;
+            def.quarantine = undefined;
+          }
         },
         generalCheck: (props, index) => {
           try {
@@ -212,6 +253,16 @@ export default {
         },
         libDefMes: (props, index) => {
           props.boxplotDef.qHyperCubeDef.qMeasures[index].qLibraryId = '';
+        },
+        libPropTransfer: (props, index, libMeasure) => {
+          const def = props.boxplotDef.qHyperCubeDef.qMeasures[index].qDef;
+          def.qLabel = libMeasure.qLabel;
+          def.qLabelExpression = libMeasure.qLabelExpression;
+          if (def.quarantine && def.quarantine.qNumFormat && libMeasure.qNumFormat) {
+            def.qNumFormat = libMeasure.qNumFormat;
+            def.isCustomFormatted = libMeasure.isCustomFormatted;
+            def.quarantine = undefined;
+          }
         },
         generalCheck: (props, index) => {
           try {
