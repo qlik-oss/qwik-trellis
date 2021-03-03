@@ -354,7 +354,7 @@ define(['./helper'], function (helper) {
   var advancedMsg3 = {
     type: "string",
     component: "text",
-    label: "\n $(vDimSet) will insert 'dimensionName={'dimensionValue'},' ",
+    label: "\n $(vDimSet) will insert ',dimensionName={'dimensionValue'}' ",
     show: function (d) {
       return d.prop && d.prop.advanced;
     }
