@@ -14,6 +14,26 @@ export default ['$scope', '$element', function ($scope, $element) {
   $scope.layout.getScope = function () {
     return $scope;
   };
+  
+  // create Trellis when the number of selected values in listbox change
+  $scope.$watch("layout.qHyperCube.qDimensionInfo[0].qStateCounts.qSelected", function (newValue, oldValue) {
+    if (newValue !== oldValue) {
+      setupStyles().then(function () {
+        createTrellisObjects();
+      });
+    }
+  });
+  
+  // create Trellis when the value of the first selected Value in the listbox changes (in case user has changed from one value to another value)
+  $scope.$watch("layout.qHyperCube.qDataPages[0].qMatrix[0][0].qText", function (newValue, oldValue) {
+    if (newValue !== oldValue) {
+      setupStyles().then(function () {
+        createTrellisObjects();
+      });
+    }
+  });
+  
+  
 
   $scope.$watch("layout.prop.columns", function (newValue, oldValue) {
     if (newValue !== oldValue) {
@@ -397,7 +417,7 @@ export default ['$scope', '$element', function ($scope, $element) {
           }],
           "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": `Sum(1)`
             }
           }],
           "qSortCriterias": $scope.sortCriterias,
@@ -435,7 +455,7 @@ export default ['$scope', '$element', function ($scope, $element) {
           }],
           "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": `Sum(1)`
             }
           }],
           "qSortCriterias": $scope.sortCriterias,
@@ -461,7 +481,7 @@ export default ['$scope', '$element', function ($scope, $element) {
           }],
           "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": `Sum(1)`
             }
           }],
           "qSortCriterias": $scope.sortCriterias,
