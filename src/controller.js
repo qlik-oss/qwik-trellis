@@ -23,7 +23,7 @@ export default ['$scope', '$element', function ($scope, $element) {
     }
   });
 
-  $scope.$watch("layout.qHyperCube.qDimensionInfo", function (newValue, oldValue) {
+  $scope.$watchCollection("layout.qHyperCube.qDimensionInfo", function (newValue, oldValue) {
     if (newValue !== oldValue) {
       setupStyles().then(function () {
         createTrellisObjects();
@@ -255,7 +255,21 @@ export default ['$scope', '$element', function ($scope, $element) {
       createTrellisObjects();
     }
   });
-
+  
+  $scope.$watch("layout.prop.reactToTrellisDimSel", function (newValue, oldValue) {
+    if (newValue !== oldValue) {
+      try {
+        setupStyles().then(function () {
+          createTrellisObjects();
+        });
+      }
+      catch (err) {
+        // Destroy existing session objects
+        destroyTrellisObjects();
+      }
+    }
+  });
+  
   $scope.$watch("layout.prop.label", function (newValue, oldValue) {
     if (newValue !== oldValue) {
       createTrellisObjects();
@@ -394,17 +408,17 @@ export default ['$scope', '$element', function ($scope, $element) {
               "qSortCriterias": $scope.sortCriterias1
             },
             "qNullSuppression": $scope.nullSuppression1
-          }],
-          "qMeasures": [{
+	  }],
+	  "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": ($scope.layout.prop.reactToTrellisDimSel) ? `Sum({$}1)` : `Sum({1}1)`
             }
-          }],
-          "qSortCriterias": $scope.sortCriterias,
-          "qInitialDataFetch": [{
+	  }],
+	  "qSortCriterias": $scope.sortCriterias,
+	  "qInitialDataFetch": [{
             qHeight: 500,
             qWidth: 2
-          }]
+	  }]
         };
         let reply = await app.createCube(params);
         console.log(reply);
@@ -435,7 +449,7 @@ export default ['$scope', '$element', function ($scope, $element) {
           }],
           "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": ($scope.layout.prop.reactToTrellisDimSel) ? `Sum({$}1)` : `Sum({1}1)`
             }
           }],
           "qSortCriterias": $scope.sortCriterias,
@@ -461,7 +475,7 @@ export default ['$scope', '$element', function ($scope, $element) {
           }],
           "qMeasures": [{
             "qDef": {
-              "qDef": `Sum({1}1)`
+              "qDef": ($scope.layout.prop.reactToTrellisDimSel) ? `Sum({$}1)` : `Sum({1}1)`
             }
           }],
           "qSortCriterias": $scope.sortCriterias,

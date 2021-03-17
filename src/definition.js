@@ -268,7 +268,26 @@ define(['./helper'], function (helper) {
     ],
     defaultValue: true
   };
-
+  
+  //e.preuss@consus-clinicmanagement.de: switch to turn on associative mode, in which the trellis container
+  //will react to direct selections and other changes of the set of the trellis dimension's
+  //possible values.
+  var reactToTrellisDimSelections = {
+    ref: "prop.reactToTrellisDimSel",
+    label: "Associative mode",
+    component: 'switch',
+    type: "boolean",
+    options: [{
+      value: false,
+      label: "Off"
+    }, {
+      value: true,
+      label: "On"
+    }
+    ],
+    defaultValue: false
+  };
+  
   var customTitle = {
     ref: "prop.customTitle",
     label: "Custom Title",
@@ -406,6 +425,7 @@ define(['./helper'], function (helper) {
           customTitleRowDef: customTitleRowDef,
           customValuesRowDef: customValuesRowDef,
           showAllDimensionValues: showAllDimensionValues,
+          reactToTrellisDimSelections: reactToTrellisDimSelections,
           border: border,
           borderWidth: borderWidth,
           borderColor: borderColor,
