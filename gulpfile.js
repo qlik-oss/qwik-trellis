@@ -9,6 +9,8 @@ var pkg = require('./package.json');
 var DIST = './dist';
 var VERSION = process.env.VERSION || 'local-dev';
 
+var name = "qlik-trellis-container";
+
 gulp.task('qext', function () {
 	var qext = {
 		name: 'Trellis container',
@@ -33,12 +35,14 @@ gulp.task('qext', function () {
 		objectMode: true
 	});
 	src._read = function () {
-		this.push(new gutil.File({
-			cwd: '',
-			base: '',
-			path: pkg.name + '.qext',
-			contents: Buffer.from(JSON.stringify(qext, null, 4))
-		}));
+		this.push(
+      new gutil.File({
+        cwd: "",
+        base: "",
+        path: name + ".qext",
+        contents: Buffer.from(JSON.stringify(qext, null, 4)),
+      })
+    );
 		this.push(null);
 	};
 	return src.pipe(gulp.dest(DIST));
@@ -49,8 +53,9 @@ gulp.task('clean', function(){
 });
 
 gulp.task('zip-build', function(){
-  return gulp.src(DIST + '/**/*')
-    .pipe(zip(`${pkg.name}_${VERSION}.zip`))
+  return gulp
+    .src(DIST + "/**/*")
+    .pipe(zip(`${name}_${VERSION}.zip`))
     .pipe(gulp.dest(DIST));
 });
 

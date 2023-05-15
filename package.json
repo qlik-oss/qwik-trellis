@@ -1,5 +1,5 @@
 {
-  "name": "qlik-trellis-container",
+  "name": "@qlik/qlik-trellis-container",
   "version": "0.0.1",
   "description": "Trellis container is a Qlik Sense chart which allows you to create a trellis chart object based on an existing master visualization.",
   "homepage": "",
