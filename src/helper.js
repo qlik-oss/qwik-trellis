@@ -6,7 +6,10 @@ define(["qlik"], function (qlik) {
       'qlik-tabbed-container',
       'qlik-trellis-container',
       'filterpane',
-      'histogram'],
+      'histogram',
+      'sn-layout-container',
+      'sn-tabbed-container',
+      'sn-analysis-autochart'],
 
     getFields: function () {
       var app = qlik.currApp(this);
