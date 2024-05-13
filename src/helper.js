@@ -7,6 +7,8 @@ define(["qlik"], function (qlik) {
       'qlik-trellis-container',
       'filterpane',
       'histogram',
+      'sn-layout-container',
+      'sn-tabbed-container',
       'sn-analysis-autochart'],
 
     getFields: function () {
